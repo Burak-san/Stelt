@@ -21,6 +21,7 @@ public class OyunKontrol : MonoBehaviour
     public GameObject[] OyunSonuPaneller;
     public TextMeshProUGUI Sayac;//tmp_text
     public Slider ZamanSlider;
+    public Button StopButton;
 
     //SAYAÇ
     public float ToplamZaman;
@@ -44,6 +45,7 @@ public class OyunKontrol : MonoBehaviour
         ToplamElemanSayisi = Havuz.transform.childCount;
         ZamanSlider.value = ToplamZaman - gecenzaman;
         ZamanSlider.maxValue = ToplamZaman;
+        StopButton.GetComponent<Button>().enabled = false;
 
         /* obje oluşturma alternatif
          * Gameobject obje = Instantiate(eklenecekobje);
@@ -54,43 +56,47 @@ public class OyunKontrol : MonoBehaviour
     }
     private void Update()
     {
-        if (zamanlayici && gecenzaman!=ToplamZaman)
+
+        if (OlusturmaDurumu == false)
         {
-            //geri sayım
-            gecenzaman += Time.deltaTime;
-            ZamanSlider.value = ToplamZaman - gecenzaman;
-            if (ZamanSlider.value == 0)
+            if (zamanlayici && gecenzaman != ToplamZaman)
             {
-                sesler[4].Play();
+                //geri sayım
+                gecenzaman += Time.deltaTime;
+                ZamanSlider.value = ToplamZaman - gecenzaman;
+                if (ZamanSlider.value == 0)
+                {
+                    sesler[4].Play();
+                    zamanlayici = false;
+                    GameOver();
+                }
+
+
+                //sayaç için bir alternatif
+                /*dakika = Mathf.FloorToInt(ToplamZaman / 60); //1
+                saniye = Mathf.FloorToInt(ToplamZaman % 60); //2
+
+                //Sayac.text = Mathf.FloorToInt(ToplamZaman).ToString();
+                Sayac.text = string.Format("{0:00}:{1:00}", dakika, saniye);*/
+            }
+            /*else
+            {
                 zamanlayici = false;
                 GameOver();
-            }
-
-
-            //sayaç için bir alternatif
-            /*dakika = Mathf.FloorToInt(ToplamZaman / 60); //1
-            saniye = Mathf.FloorToInt(ToplamZaman % 60); //2
-
-            //Sayac.text = Mathf.FloorToInt(ToplamZaman).ToString();
-            Sayac.text = string.Format("{0:00}:{1:00}", dakika, saniye);*/
+            }*/
         }
-        /*else
-        {
-            zamanlayici = false;
-            GameOver();
-        }*/
-        
+
+
     }
 
     IEnumerator Olustur()
     {
-        
 
+        Butonlarindurumu(false);
         while (OlusturmaDurumu)
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
             int rastgelesayi = Random.Range(0, Havuz.transform.childCount - 1);
-
             if (Havuz.transform.GetChild(rastgelesayi).gameObject!=null)
             {
                 Havuz.transform.GetChild(rastgelesayi).transform.SetParent(Grid.transform);
@@ -99,7 +105,9 @@ public class OyunKontrol : MonoBehaviour
                 if (OlusturmaSayisi == ToplamElemanSayisi)
                 {
                     OlusturmaDurumu = false;
-                    Destroy(Havuz.gameObject);
+                    //Destroy(Havuz.gameObject);
+                    Butonlarindurumu(true);
+                    StopButton.GetComponent<Button>().enabled = true;
                 }
             }
 
@@ -116,7 +124,37 @@ public class OyunKontrol : MonoBehaviour
         OyunSonuPaneller[2].SetActive(false);
         Time.timeScale = 1;
     }
+
     public void TekrarOyna()
+    {
+        
+
+        foreach (var item in Butonlar)
+        {
+            if (item != null)
+            {
+                item.GetComponent<Image>().enabled = true;
+                item.GetComponent<Button>().enabled = true;
+                OyunSonuPaneller[0].SetActive(false);
+                OyunSonuPaneller[1].SetActive(false);
+                OyunSonuPaneller[2].SetActive(false);
+                ilkSecimDegeri = 0;
+                zamanlayici = true;
+                gecenzaman = 0;
+                OlusturmaDurumu = false;
+                ToplamElemanSayisi = Havuz.transform.childCount;
+                ZamanSlider.value = ToplamZaman - gecenzaman;
+                ZamanSlider.maxValue = ToplamZaman;
+                if (Time.timeScale == 0)
+                {
+                    Time.timeScale = 1;
+                }
+            }
+        }
+
+        
+    }
+    public void YeniLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
