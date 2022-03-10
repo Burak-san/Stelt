@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 public class anamenukontrol : MonoBehaviour
 {
     public GameObject CikisPanel;
-
     private void Start()
     {
         if (Time.timeScale == 0)

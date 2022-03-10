@@ -28,13 +28,29 @@ public class OyunKontrol : MonoBehaviour
     //float saniye;
     bool zamanlayici;
     float gecenzaman;
+
+    public GameObject Grid;
+    public GameObject Havuz;
+    bool OlusturmaDurumu;
+    int OlusturmaSayisi;
+    int ToplamElemanSayisi;
     void Start()
     {
         ilkSecimDegeri = 0;
         zamanlayici = true;
         gecenzaman = 0;
+        OlusturmaDurumu = true;
+        OlusturmaSayisi = 0;
+        ToplamElemanSayisi = Havuz.transform.childCount;
         ZamanSlider.value = ToplamZaman - gecenzaman;
         ZamanSlider.maxValue = ToplamZaman;
+
+        /* obje oluşturma alternatif
+         * Gameobject obje = Instantiate(eklenecekobje);
+         * RectTransform rt = obje.GetComponent<RectTransform>();
+         * rt.localScale = new Vector3(.358f,.544f,1f);
+         * obje.transform.SetParent(Grid.transform);*/
+        StartCoroutine(Olustur());
     }
     private void Update()
     {
@@ -64,6 +80,31 @@ public class OyunKontrol : MonoBehaviour
             GameOver();
         }*/
         
+    }
+
+    IEnumerator Olustur()
+    {
+        
+
+        while (OlusturmaDurumu)
+        {
+            yield return new WaitForSeconds(0.1f);
+            int rastgelesayi = Random.Range(0, Havuz.transform.childCount - 1);
+
+            if (Havuz.transform.GetChild(rastgelesayi).gameObject!=null)
+            {
+                Havuz.transform.GetChild(rastgelesayi).transform.SetParent(Grid.transform);
+                //havuz objesinin rastgelesayi'nci çocuğunu grid objesinin çocuğu yaptım
+                OlusturmaSayisi++;
+                if (OlusturmaSayisi == ToplamElemanSayisi)
+                {
+                    OlusturmaDurumu = false;
+                    Destroy(Havuz.gameObject);
+                }
+            }
+
+        }
+
     }
     public void OyunuDurdur()
     {
@@ -117,7 +158,7 @@ public class OyunKontrol : MonoBehaviour
             }            
         }
 
-    }
+    }  
     public void ButonTikladi(int deger)
     {
 
