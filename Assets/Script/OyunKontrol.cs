@@ -70,6 +70,7 @@ public class OyunKontrol : MonoBehaviour
     public void TekrarOyna()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
         if (Time.timeScale == 0)
         {
             Time.timeScale = 1;
