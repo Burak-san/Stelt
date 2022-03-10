@@ -19,44 +19,52 @@ public class OyunKontrol : MonoBehaviour
     public AudioSource[] sesler;
     public GameObject[] Butonlar;
     public GameObject[] OyunSonuPaneller;
-    public TextMeshProUGUI Sayac;
-    //tmp_text
+    public TextMeshProUGUI Sayac;//tmp_text
+    public Slider ZamanSlider;
 
     //SAYAÇ
     public float ToplamZaman;
-    float dakika;
-    float saniye;
+    //float dakika;
+    //float saniye;
     bool zamanlayici;
-    
-    
-    
+    float gecenzaman;
     void Start()
     {
         ilkSecimDegeri = 0;
         zamanlayici = true;
+        gecenzaman = 0;
+        ZamanSlider.value = ToplamZaman - gecenzaman;
+        ZamanSlider.maxValue = ToplamZaman;
     }
-
     private void Update()
     {
-        if (zamanlayici && ToplamZaman > 1)
+        if (zamanlayici && gecenzaman!=ToplamZaman)
         {
             //geri sayım
-            ToplamZaman -= Time.deltaTime;
+            gecenzaman += Time.deltaTime;
+            ZamanSlider.value = ToplamZaman - gecenzaman;
+            if (ZamanSlider.value == 0)
+            {
+                sesler[4].Play();
+                zamanlayici = false;
+                GameOver();
+            }
 
-            dakika = Mathf.FloorToInt(ToplamZaman / 60); //1
+
+            //sayaç için bir alternatif
+            /*dakika = Mathf.FloorToInt(ToplamZaman / 60); //1
             saniye = Mathf.FloorToInt(ToplamZaman % 60); //2
 
             //Sayac.text = Mathf.FloorToInt(ToplamZaman).ToString();
-            Sayac.text = string.Format("{0:00}:{1:00}", dakika, saniye);
+            Sayac.text = string.Format("{0:00}:{1:00}", dakika, saniye);*/
         }
-        else
+        /*else
         {
             zamanlayici = false;
             GameOver();
-        }
+        }*/
         
     }
-
     public void OyunuDurdur()
     {
         OyunSonuPaneller[2].SetActive(true);
@@ -81,18 +89,15 @@ public class OyunKontrol : MonoBehaviour
     {
         OyunSonuPaneller[0].SetActive(true);
     }
-
     void Win()
     {
+        sesler[3].Play();
         OyunSonuPaneller[1].SetActive(true);
     }
-
     public void AnaMenu()
     {
         SceneManager.LoadScene(0);
     }
-
-    
     public void ObjeVer(GameObject objem) 
     {
         butonunKendisi = objem;
@@ -101,7 +106,6 @@ public class OyunKontrol : MonoBehaviour
         butonunKendisi.GetComponent<Image>().raycastTarget = false;
         
     }
-
     void Butonlarindurumu(bool durum)
     {
         foreach (var item in Butonlar)
@@ -114,14 +118,12 @@ public class OyunKontrol : MonoBehaviour
         }
 
     }
-    
     public void ButonTikladi(int deger)
     {
 
         Kontrol(deger);
         
     }   
-
     void Kontrol(int gelendeger)
     {
 
@@ -137,8 +139,6 @@ public class OyunKontrol : MonoBehaviour
         }
 
     }
-
-
     IEnumerator kontroletbakalim(int gelendeger)
     {
         Butonlarindurumu(false);
