@@ -22,6 +22,7 @@ public class OyunKontrol : MonoBehaviour
     public TextMeshProUGUI Sayac;//tmp_text
     public Slider ZamanSlider;
     public Button StopButton;
+    public Sprite Castle;
 
     //SAYAÇ
     public float ToplamZaman;
@@ -95,7 +96,7 @@ public class OyunKontrol : MonoBehaviour
         Butonlarindurumu(false);
         while (OlusturmaDurumu)
         {
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.03f);
             int rastgelesayi = Random.Range(0, Havuz.transform.childCount - 1);
             if (Havuz.transform.GetChild(rastgelesayi).gameObject!=null)
             {
@@ -133,6 +134,7 @@ public class OyunKontrol : MonoBehaviour
         {
             if (item != null)
             {
+                item.GetComponent<Image>().sprite = Castle;
                 item.GetComponent<Image>().enabled = true;
                 item.GetComponent<Button>().enabled = true;
                 OyunSonuPaneller[0].SetActive(false);
@@ -227,7 +229,7 @@ public class OyunKontrol : MonoBehaviour
         {
             anlikbasari++;
             sesler[0].Play();
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.5f);
 
             secilenButon.GetComponent<Image>().enabled = false;
             secilenButon.GetComponent<Button>().enabled = false;
